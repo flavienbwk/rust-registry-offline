@@ -5,18 +5,10 @@ services:
   registry:
     container_name: panamax_registry
     build: panamax
-    command: serve
+    image: panamax_registry:latest
+    command: serve /mirror
     ports:
       - 8080:8080
     volumes:
       - ./mirror:/mirror
-    networks:
-      - no-internet
-      - internet
-
-networks:
-  no-internet:
-    driver: bridge
-    internal: true
-  internet:
-    driver: bridge
+      - ./vendor:/vendor:ro

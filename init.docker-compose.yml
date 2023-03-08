@@ -5,15 +5,7 @@ services:
   registry_init:
     container_name: panamax_registry_init
     build: panamax
+    image: panamax_registry:latest
     command: init /mirror
     volumes:
       - ./mirror:/mirror
-    networks:
-      - no-internet
-
-networks:
-  no-internet:
-    driver: bridge
-    internal: true
-  internet:
-    driver: bridge

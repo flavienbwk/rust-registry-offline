@@ -2,6 +2,13 @@
 
 Run your own crate registry offline for Rust. Get instructions to download and push crates. Perfect for long plane trips ! :airplane:
 
+![Homepage of Panamax](./homepage.png)
+
+Pre-requisite :
+
+- Docker
+- Docker-compose
+
 ## Init the server (online)
 
 1. Build the server from [Panamax's repo](https://github.com/panamax-rs/panamax)
@@ -18,13 +25,10 @@ Run your own crate registry offline for Rust. Get instructions to download and p
 
 3. Replace default values
 
+    :information_source: Before running this command, you might want to check `./mirror/mirror.toml`'s content
+
     ```bash
-    export SERVER_BASE_URL=http://172.17.0.1:8080/crates
-    sed -i "s|^base_url = .*|base_url = \"$SERVER_BASE_URL\"|g" ./mirror/mirror.toml
-    sed -i "s|^keep_latest_nightlies = .*|keep_latest_nightlies = 0|g" ./mirror/mirror.toml
-    sed -i "s|^keep_latest_betas = .*|keep_latest_betas = 0|g" ./mirror/mirror.toml
-    sed -i '/^\[rustup\]/a platforms_unix = ["x86_64-unknown-linux-gnu","x86_64-unknown-linux-musl"]' ./mirror/mirror.toml
-    sed -i '/^\[rustup\]/a platforms_windows = []' ./mirror/mirror.toml
+    cp ./mirror.example.toml ./mirror/mirror.toml
     ```
 
 4. Run server sync to retrieve base crates
@@ -33,7 +37,32 @@ Run your own crate registry offline for Rust. Get instructions to download and p
     docker-compose -f sync.docker-compose.yml run registry_sync
     ```
 
-    :warning: This takes around 20+ minutes to download and uses ~XXGo of storage
+    :warning: This takes around 1 hour to download on a 30MB/s connection and uses ~XXGo of storage
+
+5. Now export server's docker image and zip this project to copy it on your offline computer
+
+    ```bash
+    docker save -o panamax_registry:latest panamax_registry.tar
+    zip -r rust-registry-offline.zip ./*
+    ```
+
+## Setup the offline server (offline)
+
+1. Load server's docker image and unzip the project
+
+    ```bash
+    docker load -i panamax_registry.tar
+    unzip -d rust-registry-offline rust-registry-offline.zip
+    cd rust-registry-offline
+    ```
+
+2. Start the server
+
+    ```bash
+    docker-compose up -d
+    ```
+
+    Check server is running browsing `http://localhost:8080`
 
 ## Download crates (online)
 
@@ -41,25 +70,36 @@ Pre-requisite : [rust and cargo are installed on your computer](https://www.rust
 
 Let's say you want to download [Huggingface's text-generation-inference](https://github.com/huggingface/text-generation-inference) crates.
 
-1. Go to the download directory
+
+1. Clone the project including the `Cargo.toml` and `Cargo.lock` files
 
     ```bash
-    cd ./download
+    git clone https://github.com/huggingface/text-generation-inference && cd text-generation-inference
     ```
 
-2. Clone the project including the `Cargo.toml` and `Cargo.lock` files
-
-    ```bash
-    git clone https://github.com/huggingface/text-generation-inference
-    cd text-generation-inference
-    ```
-
-3. Run the cargo vendor command
+2. Run the cargo vendor command
 
     ```bash
     cargo vendor
     ```
 
-## Setup the offline server (offline)
+3. Zip vendor crates to copy them to your offline computer
+
+    ```bash
+    zip -r "crates_$(date +%s).zip" ./vendor/*
+    ```
 
 ## Push the crates (offline)
+
+1. Unzip vendor crates into the `vendor/` directory
+
+    ```bash
+    export CRATE_DIR=$(date +%s)
+    zip -d "./vendor/$CRATE_DIR" "crates_XXXXXXXXX.zip"
+    ```
+
+2. Push packages
+
+    ```bash
+    CRATE_DIR=$CRATE_DIR docker-compose -f push.docker-compose.yml run push
+    ```

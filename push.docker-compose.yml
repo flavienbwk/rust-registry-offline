@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  push:
+    build: panamax
+    image: panamax_registry:latest
+    command: sync /mirror /vendor/$CRATE_DIR
+    environment:
+      CRATE_DIR: ${CRATE_DIR}
+    volumes:
+      - ./mirror:/mirror
+      - ./vendor:/vendor

@@ -5,5 +5,7 @@
 mirror/*
 !mirror/.gitkeep
 
-download/*
-!download/.gitkeep
+vendor/*
+!vendor/.gitkeep
+
+text-generation-inference/

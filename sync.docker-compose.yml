@@ -5,15 +5,7 @@ services:
   registry_sync:
     container_name: panamax_registry_sync
     build: panamax
+    image: panamax_registry:latest
     command: sync /mirror
     volumes:
       - ./mirror:/mirror
-    networks:
-      - internet
-
-networks:
-  no-internet:
-    driver: bridge
-    internal: true
-  internet:
-    driver: bridge
