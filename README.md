@@ -33,11 +33,19 @@ Pre-requisite :
 
 4. Run server sync to retrieve base crates
 
+    To download the FULL current mirror of _crates.io_ :
+
+    :warning: This takes around {20m21s-3m45s+} to download on a fiber connection and uses ~XXGo of storage
+
     ```bash
-    docker-compose -f sync.docker-compose.yml run registry_sync
+    docker-compose -f sync.docker-compose.yml run registry_sync sync /mirror
     ```
 
-    :warning: This takes around 1 hour to download on a 30MB/s connection and uses ~XXGo of storage
+    For an empty mirror that can be populated later :
+
+    ```bash
+    docker-compose -f sync.docker-compose.yml run registry_sync sync /mirror /vendor
+    ```
 
 5. Now export server's docker image and zip this project to copy it on your offline computer
 
@@ -69,7 +77,6 @@ Pre-requisite :
 Pre-requisite : [rust and cargo are installed on your computer](https://www.rust-lang.org/tools/install)
 
 Let's say you want to download [Huggingface's text-generation-inference](https://github.com/huggingface/text-generation-inference) crates.
-
 
 1. Clone the project including the `Cargo.toml` and `Cargo.lock` files
 
@@ -103,3 +110,7 @@ Let's say you want to download [Huggingface's text-generation-inference](https:/
     ```bash
     CRATE_DIR=$CRATE_DIR docker-compose -f push.docker-compose.yml run push
     ```
+
+TODO(flavienbwk): Add script to `cargo package` each vendor package (create .crate), then put it to the appropriate `./mirror/crates/` directory. Example package : `./vendor/1678289443/aho-corasick/target/package/aho-corasick-0.7.20`.
+
+TODO(flavienbwk): Updated script to add the reference of the package to the `crates.io-index` (add package or update)

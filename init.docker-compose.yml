@@ -4,7 +4,7 @@ services:
 
   registry_init:
     container_name: panamax_registry_init
-    build: panamax
+    build: .
     image: panamax_registry:latest
     command: init /mirror
     volumes:

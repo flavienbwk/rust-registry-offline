@@ -3,7 +3,7 @@ version: '3'
 services:
 
   push:
-    build: panamax
+    build: .
     image: panamax_registry:latest
     command: sync /mirror /vendor/$CRATE_DIR
     environment:

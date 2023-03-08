@@ -4,7 +4,7 @@ services:
 
   registry:
     container_name: panamax_registry
-    build: panamax
+    build: .
     image: panamax_registry:latest
     command: serve /mirror
     ports:

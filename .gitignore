@@ -9,3 +9,4 @@ vendor/*
 !vendor/.gitkeep
 
 text-generation-inference/
+ghpanamax/

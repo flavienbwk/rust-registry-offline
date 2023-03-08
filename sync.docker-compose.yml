@@ -4,8 +4,8 @@ services:
 
   registry_sync:
     container_name: panamax_registry_sync
-    build: panamax
+    build: .
     image: panamax_registry:latest
-    command: sync /mirror
     volumes:
       - ./mirror:/mirror
+      - ./vendor:/vendor:ro
