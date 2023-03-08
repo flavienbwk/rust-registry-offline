@@ -1,2 +1,13 @@
-.env
 .vscode
+
+.env
+*.bk
+
+mirror/*
+!mirror/.gitkeep
+
+vendor/*
+!vendor/.gitkeep
+
+text-generation-inference/
+ghpanamax/

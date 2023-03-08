@@ -6,7 +6,7 @@ FROM node:${NODE_VERSION}-alpine
 # renovate: datasource=npm depName=pnpm
 ARG PNPM_VERSION=7.28.0
 ARG GIT_REPO_CRATESIO_URL=https://github.com/rust-lang/crates.io
-ARG GIT_REPO_CRATESIO_COMMIT_ID=4f77e83728164c2c96f9ad79d5cd625484b1e995
+ARG GIT_REPO_CRATESIO_COMMIT_ID=4de9e5ed85298cc27a153e345dee18a5102dfa0e
 
 WORKDIR /app
 

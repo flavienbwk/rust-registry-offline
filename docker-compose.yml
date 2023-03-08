@@ -4,7 +4,7 @@ x-backend: &backend
   build:
     context: .
     dockerfile: backend.Dockerfile
-  image: flavienb/rust-registry-offline/backend:latest
+  image: flavienb/rust-registry-offline/cratesio-backend:latest
   environment:
     # All options : https://github.com/rust-lang/crates.io/blob/master/.env.sample
     DEV_DOCKER: "false"
@@ -13,7 +13,7 @@ x-backend: &backend
     GIT_REPO_URL: file:///app/tmp/index-bare
     GH_CLIENT_ID: ""
     GH_CLIENT_SECRET: ""
-    WEB_ALLOWED_ORIGINS: http://localhost:8888,http://localhost:4200
+    WEB_ALLOWED_ORIGINS: "${WEB_ALLOWED_ORIGINS}"
   volumes:
     - backend-index:/app/tmp
     - cargo-cache:/usr/local/cargo/registry
@@ -34,8 +34,6 @@ services:
 
   backend:
     <<: *backend
-    ports:
-      - 8888:8888
     networks:
       - no-internet
     depends_on:
@@ -53,7 +51,7 @@ services:
     build:
       context: .
       dockerfile: frontend.Dockerfile
-    image: flavienb/rust-registry-offline/frontend:latest
+    image: flavienb/rust-registry-offline/cratesio-frontend:latest
     entrypoint: pnpm start -- --proxy http://backend:8888
     networks:
       - no-internet

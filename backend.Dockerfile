@@ -6,7 +6,7 @@ FROM rust:$RUST_VERSION
 # renovate: datasource=crate depName=diesel_cli versioning=semver
 ARG DIESEL_CLI_VERSION=2.0.1
 ARG GIT_REPO_CRATESIO_URL=https://github.com/rust-lang/crates.io
-ARG GIT_REPO_CRATESIO_COMMIT_ID=4f77e83728164c2c96f9ad79d5cd625484b1e995
+ARG GIT_REPO_CRATESIO_COMMIT_ID=4de9e5ed85298cc27a153e345dee18a5102dfa0e
 
 RUN apt-get update \
     && apt-get install -y postgresql git \
