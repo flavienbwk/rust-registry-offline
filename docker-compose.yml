@@ -1,0 +1,76 @@
+version: "3"
+
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: backend.Dockerfile
+  image: flavienb/rust-registry-offline/backend:latest
+  environment:
+    # All options : https://github.com/rust-lang/crates.io/blob/master/.env.sample
+    DEV_DOCKER: "false"
+    DATABASE_URL: postgres://postgres:$POSTGRES_PASSWORD@postgres/cargo_registry
+    SESSION_KEY: "${SESSION_KEY}"
+    GIT_REPO_URL: file:///app/tmp/index-bare
+    GH_CLIENT_ID: ""
+    GH_CLIENT_SECRET: ""
+    WEB_ALLOWED_ORIGINS: http://localhost:8888,http://localhost:4200
+  volumes:
+    - backend-index:/app/tmp
+    - cargo-cache:/usr/local/cargo/registry
+    - target-cache:/app/target
+    - local-uploads:/app/local_uploads
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    networks:
+      - no-internet
+    volumes:
+      - ./entrypoint_sql:/docker-entrypoint-initdb.d:ro
+      - postgres-data:/var/lib/postgresql/data
+
+  backend:
+    <<: *backend
+    ports:
+      - 8888:8888
+    networks:
+      - no-internet
+    depends_on:
+      - postgres
+
+  worker:
+    <<: *backend
+    entrypoint: cargo run --bin background-worker
+    networks:
+      - no-internet
+    depends_on:
+      - backend
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    image: flavienb/rust-registry-offline/frontend:latest
+    entrypoint: pnpm start -- --proxy http://backend:8888
+    networks:
+      - no-internet
+      - internet
+    ports:
+      - 4200:4200
+
+volumes:
+  postgres-data:
+  cargo-cache:
+  target-cache:
+  backend-index:
+  local-uploads:
+
+networks:
+  no-internet:
+    driver: bridge
+    internal: true
+  internet:
+    driver: bridge
