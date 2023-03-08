@@ -35,7 +35,7 @@ Pre-requisite :
 
     To download the FULL current mirror of _crates.io_ :
 
-    :warning: This takes around {20m21s-3m45s+} to download on a fiber connection and uses ~XXGo of storage
+    :warning: Downloading the full mirror takes around 1 hour to download on a fiber connection and uses ~119GB of storage
 
     ```bash
     docker-compose -f sync.docker-compose.yml run registry_sync sync /mirror
@@ -97,6 +97,8 @@ Let's say you want to download [Huggingface's text-generation-inference](https:/
     ```
 
 ## Push the crates (offline)
+
+TODO(flavienbwk): Investigate how to copy an empty [`crates.io-index`](https://github.com/panamax-rs/panamax/blob/7cd1ae613547ee2aeb05fa05a42ebe2be9d74467/src/crates_index.rs#L82) with an "offline" flag. As this directory must be removed in order to [actualize crates](https://github.com/panamax-rs/panamax/issues/100).
 
 1. Unzip vendor crates into the `vendor/` directory
 
