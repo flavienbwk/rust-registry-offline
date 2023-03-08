@@ -2,17 +2,14 @@ version: '3'
 
 services:
 
-  registry:
-    container_name: panamax_registry
+  registry_init:
+    container_name: panamax_registry_init
     build: panamax
-    command: serve
-    ports:
-      - 8080:8080
+    command: init /mirror
     volumes:
       - ./mirror:/mirror
     networks:
       - no-internet
-      - internet
 
 networks:
   no-internet:

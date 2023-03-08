@@ -1,4 +1,9 @@
 .vscode
 
-./mirror/*
-!./mirror/.gitkeep
+*.bk
+
+mirror/*
+!mirror/.gitkeep
+
+download/*
+!download/.gitkeep
