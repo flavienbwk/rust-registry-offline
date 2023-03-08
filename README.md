@@ -85,6 +85,6 @@ Let's say you want to download [Huggingface's text-generation-inference](https:/
     CRATE_DIR=$CRATE_DIR docker-compose -f push.docker-compose.yml run push
     ```
 
-TODO(flavienbwk): Add script to `cargo package` each vendor package (create .crate), then put it to the appropriate `./mirror/crates/` directory. Example package : `./vendor/1678289443/aho-corasick/target/package/aho-corasick-0.7.20`.
+TODO(flavienbwk): Add script to `cargo package` each vendor package (create .crate), then put it to the appropriate `./mirror/crates/` directory. Example package : `./vendor/1678289443/aho-corasick/`. Details on how it works : https://boats.gitlab.io/blog/post/2017-10-28-alternative-registries/
 
 TODO(flavienbwk): Updated script to add the reference of the package to the `crates.io-index` (add package or update)

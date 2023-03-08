@@ -26,24 +26,20 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-    networks:
-      - no-internet
     volumes:
       - ./entrypoint_sql:/docker-entrypoint-initdb.d:ro
       - postgres-data:/var/lib/postgresql/data
 
   backend:
     <<: *backend
-    networks:
-      - no-internet
+    ports:
+      - 8888:8888
     depends_on:
       - postgres
 
   worker:
     <<: *backend
     entrypoint: cargo run --bin background-worker
-    networks:
-      - no-internet
     depends_on:
       - backend
 
@@ -53,9 +49,6 @@ services:
       dockerfile: frontend.Dockerfile
     image: flavienb/rust-registry-offline/cratesio-frontend:latest
     entrypoint: pnpm start -- --proxy http://backend:8888
-    networks:
-      - no-internet
-      - internet
     ports:
       - 4200:4200
 
@@ -65,10 +58,3 @@ volumes:
   target-cache:
   backend-index:
   local-uploads:
-
-networks:
-  no-internet:
-    driver: bridge
-    internal: true
-  internet:
-    driver: bridge
