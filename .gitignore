@@ -6,8 +6,8 @@
 mirror/*
 !mirror/.gitkeep
 
-vendor/*
-!vendor/.gitkeep
+crates/*
+!crates/.gitkeep
 
 text-generation-inference/
 ghpanamax/

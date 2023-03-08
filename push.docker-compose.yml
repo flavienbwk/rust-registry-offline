@@ -5,9 +5,9 @@ services:
   push:
     build: .
     image: panamax_registry:latest
-    command: sync /mirror /vendor/$CRATE_DIR
-    environment:
-      CRATE_DIR: ${CRATE_DIR}
+    entrypoint: /bin/bash
+    command: /app/scripts/push.sh
     volumes:
+      - ./scripts:/app/scripts:ro
       - ./mirror:/mirror
-      - ./vendor:/vendor
+      - ./crates:/crates:ro

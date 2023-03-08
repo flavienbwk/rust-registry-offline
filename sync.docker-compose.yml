@@ -8,4 +8,4 @@ services:
     image: panamax_registry:latest
     volumes:
       - ./mirror:/mirror
-      - ./vendor:/vendor:ro
+      - ./crates:/crates:ro

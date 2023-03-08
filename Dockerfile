@@ -25,6 +25,7 @@ RUN apt update \
         ca-certificates \
         git \
         libssl1.1 \
+        rsync \
     && git config --global --add safe.directory '*'
 
 ENTRYPOINT [ "/usr/local/bin/panamax" ]

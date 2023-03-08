@@ -9,21 +9,20 @@ Pre-requisite :
 - Docker
 - Docker-compose
 
-## Init the server (online)
+Using :
 
-1. Build the server from [Panamax's repo](https://github.com/panamax-rs/panamax)
+- [Panamax](https://github.com/panamax-rs/panamax) (the actual registry)
+
+## Retrieve server files (online)
+
+1. Build and init the server
 
     ```bash
     docker-compose build
-    ```
-
-2. Init the server
-
-    ```bash
     docker-compose -f init.docker-compose.yml run registry_init
     ```
 
-3. Replace default values
+2. Replace default values
 
     :information_source: Before running this command, you might want to check `./mirror/mirror.toml`'s content
 
@@ -31,23 +30,24 @@ Pre-requisite :
     cp ./mirror.example.toml ./mirror/mirror.toml
     ```
 
-4. Run server sync to retrieve base crates
+3. Run server sync to retrieve base crates
 
-    To download the FULL current mirror of _crates.io_ :
+    To download the FULL mirror of _crates.io_ :
 
-    :warning: Downloading the full mirror takes around 1 hour to download on a fiber connection and uses ~119GB of storage
+    > **Note**
+    > Downloading the full mirror takes around 1 hour to download on a fiber connection and uses ~119GB of storage
 
     ```bash
     docker-compose -f sync.docker-compose.yml run registry_sync sync /mirror
     ```
 
-    For an empty mirror that can be populated later :
+    For an empty mirror that can later be populated :
 
     ```bash
     docker-compose -f sync.docker-compose.yml run registry_sync sync /mirror /vendor
     ```
 
-5. Now export server's docker image and zip this project to copy it on your offline computer
+4. Now export server's docker image and zip this project to copy it on your offline computer
 
     ```bash
     docker save -o panamax_registry:latest panamax_registry.tar
@@ -74,45 +74,55 @@ Pre-requisite :
 
 ## Download crates (online)
 
-Pre-requisite : [rust and cargo are installed on your computer](https://www.rust-lang.org/tools/install)
+Pre-requisite : [rust and cargo must be installed on your computer](https://www.rust-lang.org/tools/install)
 
 Let's say you want to download [Huggingface's text-generation-inference](https://github.com/huggingface/text-generation-inference) crates.
 
-1. Clone the project including the `Cargo.toml` and `Cargo.lock` files
+1. Install [zerus](https://github.com/wcampbell0x2a/zerus) to download binary crates
+
+    > **Note**
+    > Crates must be downloaded from a computer running the same [hardware platform](https://doc.rust-lang.org/nightly/rustc/platform-support.html) than your target clients.
+
+    ```bash
+    cargo install zerus --locked
+    ```
+
+2. Clone the project to mirror
+
+    The directory must include a `Cargo.toml` and `Cargo.lock` files.
 
     ```bash
     git clone https://github.com/huggingface/text-generation-inference && cd text-generation-inference
     ```
 
-2. Run the cargo vendor command
+3. Download crates
 
     ```bash
-    cargo vendor
+    zerus package-mirror ./Cargo.toml
     ```
 
-3. Zip vendor crates to copy them to your offline computer
+4. Zip crates to copy them to your offline computer
 
     ```bash
-    zip -r "crates_$(date +%s).zip" ./vendor/*
+    zip -r "mycrates.zip" ./package-mirror/crates/*
     ```
 
 ## Push the crates (offline)
 
-TODO(flavienbwk): Investigate how to copy an empty [`crates.io-index`](https://github.com/panamax-rs/panamax/blob/7cd1ae613547ee2aeb05fa05a42ebe2be9d74467/src/crates_index.rs#L82) with an "offline" flag. As this directory must be removed in order to [actualize crates](https://github.com/panamax-rs/panamax/issues/100).
+This procedure requires write access to the `./mirror` directory of the actual server you're exposing. It does NOT work with `cargo publish` but with the following commands. You might want to include it in a CI pipeline for your users to push packages.
 
-1. Unzip vendor crates into the `vendor/` directory
-
-    ```bash
-    export CRATE_DIR=$(date +%s)
-    zip -d "./vendor/$CRATE_DIR" "crates_XXXXXXXXX.zip"
-    ```
-
-2. Push packages
+1. Unzip crates into the `crates/` directory
 
     ```bash
-    CRATE_DIR=$CRATE_DIR docker-compose -f push.docker-compose.yml run push
+    zip -d "./crates/$(date +%s)/" "mycrates.zip"
     ```
 
-TODO(flavienbwk): Add script to `cargo package` each vendor package (create .crate), then put it to the appropriate `./mirror/crates/` directory. Example package : `./vendor/1678289443/aho-corasick/target/package/aho-corasick-0.7.20`.
+2. Push crates
+
+    ```bash
+    docker-compose -f push.docker-compose.yml run --rm push
+    ```
+
+TODO(flavienbwk): Add script to `cargo package` each vendor package (create .crate), then put it to the appropriate `./mirror/crates/` directory. Example package : `./vendor/1678289443/aho-corasick/`. Details on how it works : https://boats.gitlab.io/blog/post/2017-10-28-alternative-registries/
 
 TODO(flavienbwk): Updated script to add the reference of the package to the `crates.io-index` (add package or update)
