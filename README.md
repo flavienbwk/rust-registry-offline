@@ -122,7 +122,3 @@ This procedure requires write access to the `./mirror` directory of the actual s
     ```bash
     docker-compose -f push.docker-compose.yml run --rm push
     ```
-
-TODO(flavienbwk): Add script to `cargo package` each vendor package (create .crate), then put it to the appropriate `./mirror/crates/` directory. Example package : `./vendor/1678289443/aho-corasick/`. Details on how it works : https://boats.gitlab.io/blog/post/2017-10-28-alternative-registries/
-
-TODO(flavienbwk): Updated script to add the reference of the package to the `crates.io-index` (add package or update)

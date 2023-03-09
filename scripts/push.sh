@@ -58,18 +58,18 @@ do
         crate_name=$(basename "$crate_slug_dir_noversion")
         crate_index_path="$MIRROR_PATH/crates.io-index/$crate_slug_dir_noversion"
         crate_sha256=$(sha256sum "$crate_path" | cut -d ' ' -f 1)
+
+        # TODO(flavienbwk): For the moment, any crate not currently in index will be added the list. However they currently don't include any deps[]. This at least allows the retrieval of the package from a client.
         crate_index='{"name":"'$crate_name'","vers":"'$crate_version'","deps":[],"cksum":"'$crate_sha256'","features":{},"yanked":false}'
 
-        crate_version="0.1.9" # FOR TEST, TO REMOVE
         if [ -e "$crate_index_path" ]; then
             # Append a line if one with the current version does not exist
             if ! grep -q "\"vers\":\"$crate_version\"" "$crate_index_path"; then
-                #echo "$crate_index" >> "$crate_index_path"
-                echo "$crate_index"
+                echo "$crate_index" >> "$crate_index_path"
             fi
         else
             # Create the file and add line with the current version does not exist
-            echo ""
+            echo "$crate_index" > "$crate_index_path"
         fi
         exit 0
     done
