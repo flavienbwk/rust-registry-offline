@@ -1,0 +1,13 @@
+.env
+.vscode
+
+*.bk
+
+mirror/*
+!mirror/.gitkeep
+
+crates/*
+!crates/.gitkeep
+
+text-generation-inference/
+ghpanamax/

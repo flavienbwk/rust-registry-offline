@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  push:
+    build: .
+    image: panamax_registry:latest
+    entrypoint: /bin/bash
+    command: /app/scripts/push.sh
+    volumes:
+      - ./scripts:/app/scripts:ro
+      - ./mirror:/mirror
+      - ./crates:/crates:ro

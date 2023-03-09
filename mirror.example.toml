@@ -1,0 +1,30 @@
+[mirror]
+retries = 5
+
+
+[rustup]
+
+# Perform rustup synchronization. Set this to false if you only want to mirror crates.io.
+sync = true
+
+source = "https://static.rust-lang.org"
+download_xz = true
+download_gz = false
+platforms_windows = []
+platforms_unix = ["x86_64-unknown-linux-gnu","x86_64-unknown-linux-musl"]
+download_threads = 16
+keep_latest_stables = 1
+keep_latest_betas = 0
+keep_latest_nightlies = 0
+download_dev = false
+
+
+[crates]
+
+# Perform crates synchronization. Set this to false if you only want to mirror rustup.
+sync = true
+
+download_threads = 64
+source = "https://crates.io/api/v1/crates"
+source_index = "https://github.com/rust-lang/crates.io-index"
+base_url = "http://172.17.0.1:8080/crates"

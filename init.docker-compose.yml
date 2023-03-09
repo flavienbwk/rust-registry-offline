@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+  registry_init:
+    container_name: panamax_registry_init
+    build: .
+    image: panamax_registry:latest
+    command: init /mirror
+    volumes:
+      - ./mirror:/mirror
