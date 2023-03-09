@@ -27,4 +27,4 @@ sync = true
 download_threads = 64
 source = "https://crates.io/api/v1/crates"
 source_index = "https://github.com/rust-lang/crates.io-index"
-base_url = "http://172.17.0.1:8080/crates"
+base_url = "http://172.17.0.1:8090/crates"

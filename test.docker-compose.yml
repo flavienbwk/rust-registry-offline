@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+
+  download:
+    image: rust:1.67.1-bullseye
+    command: bash /entrypoint.sh
+    volumes:
+      - ./crates:/crates
+      - ./test:/test:ro
+      - ./test-download.entrypoint.sh:/entrypoint.sh:ro
+
+  build:
+    image: rust:1.67.1-bullseye
+    command: bash /entrypoint.sh
+    volumes:
+      - ./test:/test:ro
+      - ./test-build.entrypoint.sh:/entrypoint.sh:ro

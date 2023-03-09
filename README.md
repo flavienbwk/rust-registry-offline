@@ -39,13 +39,13 @@ Using :
     > Downloading the full mirror takes around 1 hour to download on a fiber connection and uses ~119GB of storage
 
     ```bash
-    docker-compose -f sync.docker-compose.yml run registry_sync sync /mirror
+    docker-compose -f sync.docker-compose.yml run --rm registry_sync sync /mirror
     ```
 
     For an empty mirror that can later be populated :
 
     ```bash
-    docker-compose -f sync.docker-compose.yml run registry_sync sync /mirror /vendor
+    docker-compose -f sync.docker-compose.yml run --rm registry_sync sync /mirror /crates
     ```
 
 4. Now export server's docker image and zip this project to copy it on your offline computer
@@ -55,7 +55,7 @@ Using :
     zip -r rust-registry-offline.zip ./*
     ```
 
-## Setup the offline server (offline)
+## Start the offline server (offline)
 
 1. Load server's docker image and unzip the project
 
@@ -68,6 +68,7 @@ Using :
 2. Start the server
 
     ```bash
+    docker-compose -f sync.docker-compose.yml run --rm registry_sync rewrite /mirror
     docker-compose up -d
     ```
 
@@ -123,3 +124,29 @@ This procedure requires write access to the `./mirror` directory of the actual s
     ```bash
     docker-compose -f push.docker-compose.yml run --rm push
     ```
+
+## Test
+
+For you to quickly test this repo or for automated testing.
+
+```bash
+# Clone project
+git clone https://github.com/flavienbwk/rust-registry-offline && cd rust-registry-offline
+
+# Build, init and start server (online)
+docker-compose build && docker-compose -f init.docker-compose.yml run registry_init
+cp ./mirror.example.toml ./mirror/mirror.toml
+docker-compose -f sync.docker-compose.yml run --rm registry_sync sync /mirror /crates
+
+# Download example crates (online)
+docker-compose -f test.docker-compose.yml run --rm download
+
+# Start registry (offline)
+docker-compose up -d
+
+# Populate registry from downloaded crates (offline)
+docker-compose -f push.docker-compose.yml run --rm push
+
+# Run tests (offline)
+docker-compose -f test.docker-compose.yml run --rm build
+```

@@ -8,7 +8,7 @@ services:
     image: panamax_registry:latest
     command: serve /mirror
     ports:
-      - 8080:8080
+      - 8090:8080
     volumes:
       - ./mirror:/mirror
       - ./crates:/crates:ro
