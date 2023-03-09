@@ -12,6 +12,7 @@ Pre-requisite :
 Using :
 
 - [Panamax](https://github.com/panamax-rs/panamax) (the actual registry)
+- [Zerus](https://github.com/wcampbell0x2a/zerus) (to download binary crates)
 
 ## Retrieve server files (online)
 
